@@ -424,9 +424,10 @@ window.onload = function() {
 		{
 
 			iMod++;
-			var gamepads = navigator.webkitGetGamepads();
+		//	var gamepads = navigator.webkitGetGamepads();
 
-			var pad = gamepads[0];
+		//	var pad = gamepads[0];
+	
 			if( pad )
 			{
 
