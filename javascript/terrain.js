@@ -557,7 +557,7 @@ window.onload = function() {
 
 			*/
 			
-			}
+		//	}
 			
 
 		    requestAnimationFrame( animate );
