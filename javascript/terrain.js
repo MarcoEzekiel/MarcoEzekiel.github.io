@@ -503,25 +503,25 @@ window.onload = function() {
 		var startZ = [];
 		var radius = [];
 		var color = [];
-			var gamepads = navigator.webkitGetGamepads();
+		//	var gamepads = navigator.webkitGetGamepads();
 
-			var pad = gamepads[0];
-			if( pad )
-			{
+		//	var pad = gamepads[0];
+		//	if( pad )
+		//	{
 		
 				// drift protection as axis controllers do not return 0
-				var caxis0  = Math.round( pad.axes[0] * 10 ) / 10; // yoke pull/push
-				var caxis1  = Math.round( pad.axes[1] * 10 ) / 10; // yoke left/right
-				var caxis2  = Math.round( pad.axes[2] * 10 ) / 10; // throttles left
-				var caxis3  = Math.round( pad.axes[3] * 10 ) / 10; // throttle right 
-				var caxis4  = Math.round( pad.axes[4] * 10 ) / 10; // throttle center
-				var caxis5  = Math.round( pad.axes[5] * 10 ) / 10; 
-				var caxis6  = Math.round( pad.axes[6] * 10 ) / 10; 
-				var caxis7  = Math.round( pad.axes[7] * 10 ) / 10; 
-				var caxis8  = Math.round( pad.axes[8] * 10 ) / 10; 
-				var caxis9  = Math.round( pad.axes[9] * 10 ) / 10; // right thumb
+	//			var caxis0  = Math.round( pad.axes[0] * 10 ) / 10; // yoke pull/push
+	//			var caxis1  = Math.round( pad.axes[1] * 10 ) / 10; // yoke left/right
+	//			var caxis2  = Math.round( pad.axes[2] * 10 ) / 10; // throttles left
+	//			var caxis3  = Math.round( pad.axes[3] * 10 ) / 10; // throttle right 
+	//			var caxis4  = Math.round( pad.axes[4] * 10 ) / 10; // throttle center
+	//			var caxis5  = Math.round( pad.axes[5] * 10 ) / 10; 
+	//			var caxis6  = Math.round( pad.axes[6] * 10 ) / 10; 
+	//			var caxis7  = Math.round( pad.axes[7] * 10 ) / 10; 
+	//			var caxis8  = Math.round( pad.axes[8] * 10 ) / 10; 
+	//			var caxis9  = Math.round( pad.axes[9] * 10 ) / 10; // right thumb
 
-
+/*
 				var cbutton0 = pad.buttons[0]; 
 				var cbutton0 = pad.buttons[1];
 				var cbutton0 = pad.buttons[2];
@@ -555,7 +555,7 @@ window.onload = function() {
 
 				}
 
-
+			*/
 			
 			}
 			
