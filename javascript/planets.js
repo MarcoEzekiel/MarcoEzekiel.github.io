@@ -428,21 +428,21 @@ window.onload = function() {
 
 		//	var pad = gamepads[0];
 	
-			if( pad )
-			{
+		//	if( pad )
+		//	{
 
 				/*
 				*
 				*/
 		
-				(pad.buttons[1] == 1  || keyboard.pressed("z") ) ? seeAll = true: seeAll = false;
-				if(seeAll ===true){
-					console.log('foo');
-				}
+		//		(pad.buttons[1] == 1  || keyboard.pressed("z") ) ? seeAll = true: seeAll = false;
+		//		if(seeAll ===true){
+		//			console.log('foo');
+		//		}
 				// drift protection as axis controllers do not return 0
-				var cxaxis  = Math.round( pad.axes[0] * 10 ) / 10; 
-				var cyaxis  = Math.round( pad.axes[1] * 10 ) / 10; 
-				var czaxis  = Math.round( pad.axes[3] * 10 ) / 10; 
+		//		var cxaxis  = Math.round( pad.axes[0] * 10 ) / 10; 
+		//		var cyaxis  = Math.round( pad.axes[1] * 10 ) / 10; 
+		//		var czaxis  = Math.round( pad.axes[3] * 10 ) / 10; 
 
 				
 				//camera.position.z <=.01 ? camera.rotation.x = 180: camera.rotation.x = 0;
@@ -486,7 +486,7 @@ window.onload = function() {
 				// }
 				// //alert(lookAt.x+":"+lookAt.y+":"+lookAt.z);
 				// camera.lookAt(lookAt)
-			}
+		//	}
 			
 
 			
