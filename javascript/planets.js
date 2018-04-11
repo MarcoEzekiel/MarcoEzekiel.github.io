@@ -43,8 +43,8 @@ window.onload = function() {
 		function init() 
 		{
 			// SCENE
-			scene = new THREE.Scene();
-
+			scene = new THREE.Scene({ background: null });
+			//scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 			// CAMERA
 			var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 			var VIEW_ANGLE = 40, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
@@ -58,12 +58,16 @@ window.onload = function() {
 			camera.lookAt(lookAt);	
 
 			if ( Detector.webgl )
-				renderer = new THREE.WebGLRenderer( {antialias:true} );
+				renderer = new THREE.WebGLRenderer( {antialias:true,  alpha: true } );
 			else
 				renderer = new THREE.CanvasRenderer(); 
-
+  			renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
 			renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+			renderer.autoClear = false;
+            renderer.setClearColor(0x000000, 0.0);
+
 			container = document.createElement( 'div' );
+			renderer.domElement.id = 'renderer';
 
 			document.body.appendChild( container );
 
@@ -113,74 +117,6 @@ window.onload = function() {
 				var extrudeSettings = { amount: 20 }; // bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5;
 				addSolidLineShape( circShape, extrudeSettings, color, x, y, z, 0, 0, 0, 1, index );
 				
-
-			}
-
-			function drawGuage(x,y,z,radius,index,color,axisController){
-
-				circPoints = [];
-				function setCirclePointCoordinates(radius){
-					for(var iDeg= 1; iDeg <=360 ; iDeg++){
-						var xN = radius * Math.cos(2 * Math.PI * iDeg / 360).toFixed(6);
-						var yN = radius * Math.sin(2 * Math.PI * iDeg / 360).toFixed(6); 
-						circPoints.push(new THREE.Vector2 (xN+x,yN+y));
-					}
-				}
-				setCirclePointCoordinates(radius);
-
-				
-				var circShape = new THREE.Shape( circPoints );
-				var extrudeSettings = { amount: 20 }; // bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5;
-				addSolidLineShape( circShape, extrudeSettings, color, 0, 0, 0, 0, 0, 0, 1, index );
-				//addExtruded3DShape( circShape, extrudeSettings, Math.random() * 0xffffff, 0, 0, 0, 0, 0,0, .8, index );
-
-
-				var lineGeometry = new THREE.Geometry();
-				var vertArray = lineGeometry.vertices;
-				vertArray.push( new THREE.Vector3(x, y ,z), new THREE.Vector3(x,radius,z));
-				lineGeometry.computeLineDistances();
-				var lineMaterial = new THREE.LineBasicMaterial( { color:color } );
-
-			 	indicators[index] = new THREE.Line( lineGeometry, lineMaterial );
-			 	indicators[index].startX = x;
-			 	indicators[index].startY = y;
-				indicators[index].startZ = z;
-				indicators[index].radius = radius;
-				indicators[index].color = color;
-
-				scene.add(indicators[index]);
-
-				// create a canvas element
-				function addText(text, x,y,z){
-					var canvas1 = document.createElement('canvas');
-					var context1 = canvas1.getContext('2d');
-					context1.font = "Bold 20px Arial";
-					c = "#"+Math.round(color).toString(16);
-					context1.fillStyle = c;
-				    context1.fillText(text, 0, 50);
-				    
-					// canvas contents will be used for a texture
-					var texture1 = new THREE.Texture(canvas1) 
-					texture1.needsUpdate = true;
-				      
-				    var material1 = new THREE.MeshBasicMaterial( {map: texture1, side:THREE.DoubleSide } );
-				    material1.transparent = true;
-
-				    var mesht = new THREE.Mesh(
-				        new THREE.PlaneGeometry(canvas1.width, canvas1.height),
-				        material1
-				      );
-					mesht.position.set(x,y,z);
-					scene.add( mesht );
-				}
-				var rInner = radius-20;
-				for(var tp = 0; tp <=11; tp++){
-
-						xT = rInner * Math.cos(2 * Math.PI * (tp +135) / 12).toFixed(6)+140;
-						yT = rInner * Math.sin(2 * Math.PI * (tp +135) / 12).toFixed(6)-28; 
-						//alert(x+135+' : '+y+165);
-						addText(invertDisplay(tp), xT+x, yT+y ,z , tp);
-				}
 
 			}
 
@@ -274,20 +210,22 @@ window.onload = function() {
 
 				}
 
-				var surface = new THREE.MeshBasicMaterial({
-				    map: THREE.ImageUtils.loadTexture(img)
-				});
+				// var surface = new THREE.MeshBasicMaterial({
+				//     map: THREE.ImageUtils.loadTexture(img)
+				// });
 
 				var sphereGeometry = new THREE.SphereGeometry(radius, segWidth, segHeight);
-				var sphereTexture = new THREE.ImageUtils.loadTexture( img );
+				//var sphereTexture = new THREE.ImageUtils.loadTexture( img );
+				var sphereTexture = new THREE.TextureLoader().load( img);
+
 				var sphereMaterial = new THREE.MeshBasicMaterial( { map: sphereTexture } );
 
-				/*
-				var ringGeometry = new THREE.CircleGeometry(radius+200);
-				var ringMaterial = new THREE.MeshBasicMaterial( { color: 0xFF6103, wireframe: true, transparent: false } ); 
-				ring[index] = new THREE.Mesh(ringGeometry, ringMaterial);
-				scene.add( ring[index] );
-				*/
+				
+				// var ringGeometry = new THREE.CircleGeometry(radius+200);
+				// var ringMaterial = new THREE.MeshBasicMaterial( { color: 0xFF6103, wireframe: true, transparent: false } ); 
+				// ring[index] = new THREE.Mesh(ringGeometry, ringMaterial);
+				// scene.add( ring[index] );
+				
 
 				planet[index] = new THREE.Mesh(sphereGeometry.clone() , sphereMaterial);
 				planet[index].radius = radius;
@@ -301,18 +239,11 @@ window.onload = function() {
 
 
 			function addSun(x, y, z, radius, segWidth, segHeight, index ){
-				// var darkMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-				// var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xFF6103, wireframe: true, transparent: true } ); 
-				// var multiMaterial = [ darkMaterial, wireframeMaterial ]; 
-				
-				//index % 2 == 0 ? img = "images/fire.jpeg": img = "images/fire.jpeg";
-				var img = "images/fire.jpeg";
-				var fire = new THREE.MeshBasicMaterial({
-				    map: THREE.ImageUtils.loadTexture(img)
-				});
+
+				var img = "images/fire.gif";
 
 				var sphereGeometry = new THREE.SphereGeometry(radius, segWidth, segHeight);
-				var sphereTexture = new THREE.ImageUtils.loadTexture( img );
+				var sphereTexture = new THREE.TextureLoader().load( img);
 				var sphereMaterial = new THREE.MeshBasicMaterial( { map: sphereTexture } );
 				sol[index] = new THREE.Mesh(sphereGeometry.clone() , sphereMaterial);
 
@@ -335,48 +266,28 @@ window.onload = function() {
 			////////////
 
 			function makeStars(){
-				// stars
-				// create the particle variables
-				var particleCount = 5000,
-				    particles = new THREE.Geometry(),
-				    pMaterial =
-				      new THREE.ParticleBasicMaterial({
-				        color: 0xFFFFFF,
-				        size: Math.random() * 50,
-					    map: THREE.ImageUtils.loadTexture(
-					      "images/star1.jpg"
-					    ),
-					    blending: THREE.AdditiveBlending,
-					    transparent: true
-				      });
-					//pMaterial.blending = THREE.AdditiveBlending;
-				// now create the individual particles
-				for(var p = 0; p < particleCount; p++) {
 
-				  // create a particle with random
-				  // position values, -250 -> 250
-				  var pX = Math.random() * 22000 -7000,
-				      pY = Math.random() * 22000 -7000,
-				      pZ = Math.random() * 22000 -7000,
-				      particle = new THREE.Vertex(
-				        new THREE.Vector3(pX, pY, pZ)
-				      );
-					// particle = new THREE.Particle( new THREE.ParticleCircleMaterial( { color: 0xffffff, opacity: 1, blending: THREE.AdditiveBlending } ) );
-					// particle.position.set(px, py, pz);
-				  // add it to the geometry
-				  particles.vertices.push(particle);
+				var starsGeometry = new THREE.Geometry();
+
+				for ( var i = 0; i < 10000; i ++ ) {
+
+					var star = new THREE.Vector3();
+					star.x = Math.random() * 22000 -7000;
+					star.y = Math.random() * 22000 -7000;
+					star.z = Math.random() * 22000 -7000;
+					starsGeometry.vertices.push( star );
+
 				}
 
-				// create the particle system
-				var particleSystem =
-				  new THREE.ParticleSystem(
-				    particles,
-				    pMaterial);
-				particleSystem.sortParticles = true;
-				// add it to the scene
-				scene.add(particleSystem);
+				var starsMaterial = new THREE.PointsMaterial( { size: 10, color: 'yellow' } );
+
+				var starField = new THREE.Points( starsGeometry, starsMaterial );
+
+				scene.add( starField );
 			}
-			//makeStars();
+			makeStars();
+
+
 			//sun addSun(x, y, z, radius, segWidth, segHeight, index )
 			addSun(0,0,9000,400,32,16,1);
 			//planets
@@ -388,7 +299,7 @@ window.onload = function() {
 			planet[1].rotation.x = 0.311;
 			planet[2].rotation.x = 0.47;
 			planet[3].rotation.x = 0.6;
-			//planet[4].rotation.x = 0.11;
+
 // 			//moons
  			addPlanet(321,planet[4].position.y, planet[4].position.z, 33, 32, 16, 0xFFFFCC, 0xFFDDAA, 8 ,0.00201	,1,4);
  			addPlanet(600,planet[4].position.y, planet[4].position.z, 66, 32, 17, 0xFFCC99, 0xFFAA88, 9 ,0.00201	,1,4);
@@ -396,15 +307,11 @@ window.onload = function() {
 			planet[8].rotation.x = 6.68;
 			planet[9].rotation.x= 3.13; 	
 
-			//drawCircle(planet[4].position.x+200,planet[4].position.y,planet[4].position.z,300,1,0xff0000);
- 			// surface
-			//addPlanet(1,planet[4].position.y, planet[4].position.z, 10, 32, 16, 0xffffff, 0x000000, 10 ,0.00201	,1,4);
-
+	
  			// lookat
  			addPlanet(5000,planet[4].position.y, planet[4].position.z, 1, 4, 2, 0xffffff, 0x000000, 11 ,0.00201	,1,4);
 
  			daylightIndicator = Math.sqrt(Math.pow(2600,2) + Math.pow(5000,2) );
- 			//alert(daylightIndicator);
 
 			var radInner = 150;
 			var radMiddle = 155;
@@ -418,77 +325,15 @@ window.onload = function() {
 		var theta_xz =0;
 		var theta_yz =0;
 		var cameraMotionAngle=0;
-
+		var biggest = 0;
+		var smallest = 10000;
 		var camX, camY, camZ, lookX,lookY,lookZ;
+		var seeAll = false;
+
 		function animate() 
 		{
 
 			iMod++;
-		//	var gamepads = navigator.webkitGetGamepads();
-
-		//	var pad = gamepads[0];
-	
-		//	if( pad )
-		//	{
-
-				/*
-				*
-				*/
-		
-		//		(pad.buttons[1] == 1  || keyboard.pressed("z") ) ? seeAll = true: seeAll = false;
-		//		if(seeAll ===true){
-		//			console.log('foo');
-		//		}
-				// drift protection as axis controllers do not return 0
-		//		var cxaxis  = Math.round( pad.axes[0] * 10 ) / 10; 
-		//		var cyaxis  = Math.round( pad.axes[1] * 10 ) / 10; 
-		//		var czaxis  = Math.round( pad.axes[3] * 10 ) / 10; 
-
-				
-				//camera.position.z <=.01 ? camera.rotation.x = 180: camera.rotation.x = 0;
-				//crossX.position.set(crossX.position.x + ( cxaxis * 10), crossX.position.y+ ( cyaxis * 10 ), crossX.position.z+ ( czaxis * 10));
-			  	//crossY.position.set(crossY.position.x + ( cxaxis * 10), crossY.position.y+ ( cyaxis * 10 ), crossY.position.z+ ( czaxis * 10));
-//			alert(scene.position.x+':'+scene.position.y+':'+scene.position.z);
-			//calculate distance to 0,0,0
-
-
-
-				//sx, sy, sz are the coordinates you are trying to calculate. 
-				//cx, cy, cz are the coordinates you are at, 
-				//r is euclidean distance (range in your terms). 
-				//theta_xz is the angle in the xz plane (sweeping from z to x), 
-				//and theta yz is the angl in the yz plane (sweeping from z to y).
-				//alert(lookAt.x+":"+lookAt.y+":"+lookAt.z);
-				// isNaN(lookAt.x) ? lookAt.x = 0: lookAt.x = lookAt.x;
-				// isNaN(lookAt.y) ? lookAt.y = 0: lookAt.y = lookAt.y;
-				// isNaN(lookAt.z) ? lookAt.z = 0: lookAt.z = lookAt.z;
-				// var r = Math.sqrt(Math.pow(camera.position.x -lookAt.x,2) + Math.pow(camera.position.y - lookAt.y,2) + Math.pow(camera.position.z - lookAt.z,2));
-				// cxaxis > 0 ? rxMotion = 2:rxMotion = -2;
-				// cyaxis > 0 ? ryMotion = 2:ryMotion = -2;
-				// czaxis > 0 ? rzMotion = 2:rzMotion = -2;
-
-				// theta_xz += de2ra(cxaxis);
-				// theta_yz += de2ra(cyaxis);
-
-				// if(czaxis != 0){
-				// 	moveTo.x = (Math.sin(theta_xz) * rxMotion * Math.cos(theta_yz)) + camera.position.x;
-				// 	moveTo.y = (ryMotion*Math.sin(theta_yz) ) + camera.position.y;
-				// 	moveTo.z = ( Math.cos(theta_xz) * rzMotion *  Math.cos(theta_yz)) + camera.position.z;
-				// 	//alert(theta_xz+":"+theta_yz+":"+moveTo.x+":"+moveTo.y+":"+moveTo.z);
-				// 	camera.position.set(moveTo.x, moveTo.y, moveTo.z);
-
-
-
-				// 	lookAt.x = (Math.sin(theta_xz) * r * Math.cos(theta_yz)) + camera.position.x;
-				// 	lookAt.y = (r*Math.sin(theta_yz) ) + camera.position.y;
-				// 	lookAt.z = (Math.cos(theta_xz) * r * Math.cos(theta_yz)) - camera.position.z;
-
-				// }
-				// //alert(lookAt.x+":"+lookAt.y+":"+lookAt.z);
-				// camera.lookAt(lookAt)
-		//	}
-			
-
 			
 
 			// rotations
@@ -535,84 +380,48 @@ window.onload = function() {
 			planet[8].motionAngle += 0.0011/10;
 			planet[8].position.set(   (planet[4].radius+planet[8].xDistance)* Math.cos(planet[8].motionAngle) + planet[4].position.x , planet[4].position.y ,(planet[4].radius+planet[8].xDistance)* Math.sin(planet[8].motionAngle) + planet[4].position.z)
 
-// surface
-			// planet[10].motionAngle += 0.0015;
-			// planet[10].position.set(   (planet[4].radius+planet[10].xDistance)* Math.cos(planet[10].motionAngle) + planet[4].position.x , planet[4].position.y ,(planet[4].radius+planet[10].xDistance)* Math.sin(planet[10].motionAngle) + planet[4].position.z)
-
 // lookat
 			planet[11].motionAngle += 0.003715;
 			planet[11].position.set(   (planet[4].radius+planet[11].xDistance)* Math.cos(planet[11].motionAngle) + planet[4].position.x , planet[4].position.y ,(planet[4].radius+planet[11].xDistance)* Math.sin(planet[11].motionAngle) + planet[4].position.z)
 
+
+
 			var distancetosun = Math.sqrt( Math.pow(sol[1].position.z - planet[11].position.z, 2 ) + Math.pow(sol[1].position.x - planet[11].position.x,2  ));
-			Math.round(distancetosun) <= Math.round(daylightIndicator) ? daylight=true: daylight=false;
-
-
-			daylight === true ? document.body.style.background = '#4444FF': document.body.style.background= '#020002';
-			// var skyColor = getGradients(distancetosun);
-			// document.body.style.background = skyColor[1];
+		
+            if( seeAll == false ){
+    			if ( distancetosun > 7190 && distancetosun  < 7200 ){
+			        	document.getElementById('bg0').style.opacity = "0";
+			        	document.getElementById('bg1').style.opacity = "1";
+			        	document.getElementById('bg2').style.opacity = "0";
+			        }
+			    if ( distancetosun > 3190 && distancetosun < 3200 ){
+			        	document.getElementById('bg0').style.opacity = "0";
+			        	document.getElementById('bg1').style.opacity = "0";
+			        	document.getElementById('bg2').style.opacity = "1";
+			        }
+			}  
+			if ( seeAll == true ){
+			        	document.getElementById('bg0').style.opacity = "1";
+			        	document.getElementById('bg1').style.opacity = "0";
+			        	document.getElementById('bg2').style.opacity = "0";
+			}
+		
 
 			camX = planet[4].radius * Math.cos(planet[4].motionAngle) + planet[4].position.x;
 			camY = planet[4].position.y;
 			camZ = planet[4].radius * Math.sin(planet[4].motionAngle) + planet[4].position.z;
 
-			// lookAt.x = planet[11].position.x
-			// lookAt.y = planet[11].position.y;
-			// lookAt.z = planet[11].position.z;
-			seeAll = true;
-			//0.00715
+
 			if(seeAll === false){
 				camera.position.set((planet[4].radius+1)* Math.cos(planet[11].motionAngle) + planet[4].position.x , planet[4].position.y ,(planet[4].radius+1)* Math.sin(planet[11].motionAngle) + planet[4].position.z);
 				camera.lookAt(planet[11].position);
 			}
 			else{
-				camera.position.set(0,0,16000);
+				camera.position.set(0,1500,16000);
 				camera.lookAt(scene.position);
 			}
 
-			//shape_line[1].position.set( camera.position );
-			 // camera.position.set(sol[1].position.x, sol[1].position.y+5000, sol[1].position.z+500);
-			 // camera.lookAt(sol[1].position);
-			// camera is on
-			// // planet[5].motionAngle += 0.00201;
-			// // planet[5].position.set(   (sol[2].radius+600)* Math.cos(planet[5].motionAngle) + sol[2].position.x , sol[2].position.y ,(sol[2].radius+1150)* Math.sin(planet[5].motionAngle) + sol[2].position.z)
-			
-			// // planet[6].motionAngle += 0.00201;
-			// // planet[6].position.set(   (sol[2].radius+1200)* Math.cos(planet[6].motionAngle) + sol[2].position.x , sol[2].position.y ,(sol[2].radius+1150)* Math.sin(planet[6].motionAngle) + sol[2].position.z)
-			
-			// // planet[7].motionAngle += 0.00201;
-			// // planet[7].position.set(   (sol[2].radius+1850)* Math.cos(planet[7].motionAngle) + sol[2].position.x , sol[2].position.y ,(sol[2].radius+1150)* Math.sin(planet[7].motionAngle) + sol[2].position.z)
-			
-			// planet[8].motionAngle += 0.00601;
-			// planet[8].position.set(   (planet[4].radius+planet[8].xDistance)* Math.cos(planet[8].motionAngle) + planet[4].position.x , planet[4].position.y ,(planet[4].radius+planet[8].xDistance)* Math.sin(planet[8].motionAngle) + planet[4].position.z)
 
-			// planet[9].motionAngle += 0.00301;
-			// planet[9].position.set(   (planet[4].radius+planet[9].xDistance)* Math.cos(planet[9].motionAngle) + planet[4].position.x , planet[4].position.y ,(planet[4].radius+planet[9].xDistance)* Math.sin(planet[9].motionAngle) + planet[4].position.z)
-
-			//var 4RotDisplay = '<div class="headerShort">4 rot: '+planet[4].rotation.y+'</div>';
-
-
-			// if( Math.round( planet[4].rotation.y*100 )/100 % Math.round() ){
-
-			// }
-			// var piMod = ( Math.round( Math.PI*100 )/100 ) % (0-( Math.round( planet[4].rotation.y*100 )/100 )) ;
-
-			// if(piMod == 0){alert('0')}
-
-			// var xDisplay = '<div class="headerShort">'+daylight +' : </br>'+Math.round(distancetosun)+' : </br>'+Math.round(daylightIndicator)+'</div>';
-			// //var xDisplay = '<div class="headerShort">X: '+Math.round(camera.position.x * 100)/100 +'</div>';
-			// var yDisplay = '<div class="headerShort">Y: '+Math.round(camera.position.y * 100)/100 +'</div>';
-			// var zDisplay = '<div class="headerShort">Z: '+Math.round(camera.position.z * 100)/100 +'</div>';
-			// var theta_yzDisplay = '<div class="headerLong">theta_yz: '+theta_yz+'</div> ';
-			// var theta_xzDisplay = '<div class="headerLong">theta_xz: '+theta_xz+'</div>';
-			// var displayLookAtX = '<div class="headerLong">lookAtX: '+lookAt.x +'</div>';
-			// var displayLookAtY = '<div class="headerLong">lookAtY: '+lookAt.y +'</div>';
-			// var displayLookAtZ = '<div class="headerLong">lookAtZ: '+lookAt.z +'</div>';
-			// var details = xDisplay+yDisplay+zDisplay+theta_yzDisplay+theta_xzDisplay+displayLookAtX+displayLookAtY+displayLookAtZ;
-
-
-
-			// $('#details').html( details  );
-			// //pad.buttons[i]
 		    requestAnimationFrame( animate );
 			render();		
 			update();
@@ -622,10 +431,11 @@ window.onload = function() {
 		function update()
 		{
 			if ( keyboard.pressed("z") ) 
-			{ 
-				alert('zTest');
-			}
-			
+			seeAll = true;
+
+			if ( keyboard.pressed("x") ) 
+			seeAll = false;
+
 			controls.update();
 			stats.update();
 		}

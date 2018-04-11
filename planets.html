@@ -3,9 +3,7 @@
 	<head>
 		<title>Planets</title>
 		<script src="javascript/jquery-1.9.1.js"></script>
-		<script src="javascript/modernizr.custom.42920.js"></script>
-		<script src="javascript/gamepad.js/gamepad.js"></script>
-	
+		<script src="javascript/modernizr.custom.42920.js"></script>	
 		<script src="javascript/three.min.js"></script>
 		<script src="javascript/Detector.js"></script>
 		<script src="javascript/THREEx.FullScreen.js"></script>
@@ -18,6 +16,34 @@
 		<link rel="stylesheet" type="text/css" href="css/app.css">
 	</head>
 	<body>
+		<!-- SVG syntax --> 
+		<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1 1" preserveAspectRatio="none">
+
+			<linearGradient id="g0" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop stop-color="#3F0001" offset="0%"/>
+				<stop stop-color="#3F0001" offset="15%"/>
+				<stop stop-color="#3F0001" offset="85%"/>
+				<stop stop-color="#3F0001" offset="100%"/>
+			</linearGradient>
+
+			<linearGradient id="g1" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop stop-color="#000040" offset="0%"/>
+				<stop stop-color="#3F0001" offset="15%"/>
+				<stop stop-color="#3F0001" offset="85%"/>
+				<stop stop-color="#000040" offset="100%"/>
+			</linearGradient>
+
+			<linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop stop-color="#2F80ED" offset="0%"/>
+				<stop stop-color="#56CCF2" offset="35%"/>
+				<stop stop-color="#56CCF2" offset="65%"/>
+				<stop stop-color="#2F80ED" offset="100%"/>
+			</linearGradient>
+
+			<rect id="bg0" x="0" y="0" width="1" height="1" fill="url(#g0)" />
+			<rect id="bg1" x="0" y="0" width="1" height="1" fill="url(#g1)" />
+			<rect id="bg2" x="0" y="0" width="1" height="1" fill="url(#g2)" />
+		</svg>
 		<footer>
 				<script src="javascript/planets.js"></script>
 		</footer>

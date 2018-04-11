@@ -1,13 +1,40 @@
 body{
-	background-color: black;
 	color:white;
-	transition: background-color 3s ease 1500ms;
+	transition: background 3s ease 1500ms;
 }
-
-
+svg{
+	z-index: 0;
+}
 a{
 	color:#FF00FF;
 }
+
+rect{
+	transition: opacity 1s ease 500ms;
+}
+
+#renderer{
+	position:absolute;
+	top:0;
+	left:0;
+	z-index: 100;
+}
+#bg0{
+	opacity:0;
+}
+#bg1{
+	opacity:1;
+}
+#bg2{
+	opacity:0;
+}
+#bg3{
+	opacity:0;
+}
+#bg4{
+	opacity:0;
+}
+
 #details{
 	background-color: black;
 	color:white;
